@@ -11,6 +11,8 @@
 @import AVFoundation;
 
 @interface CentralViewController ()
+@property (weak, nonatomic) IBOutlet UIButton *playButton;
+
 
 @end
 
@@ -18,6 +20,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.playButton.enabled = NO;
     self.bufferedSongData = [NSMutableData data];
     self.pendingRequests = [NSMutableArray array];
     
@@ -40,15 +43,7 @@
 }
 
 - (void)viewDidAppear:(BOOL)animated {
-    if (self.appDelegate.mpcHandler.session != nil) {
-        [[self.appDelegate mpcHandler] setupBrowser];
-        [[[self.appDelegate mpcHandler] browser] setDelegate:self];
-        
-        [self presentViewController:self.appDelegate.mpcHandler.browser
-                           animated:YES
-                         completion:nil];
     }
-}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -210,8 +205,24 @@
     if (self.player.currentItem.status == AVPlayerItemStatusReadyToPlay)
     {
         NSLog(@"READY TO PLAY");
-        [self.player play];
+        self.playButton.enabled = YES;
     }
 }
+
+- (IBAction)playButtonPressed:(id)sender {
+    [self.player play];
+}
+- (IBAction)searchForPeers:(id)sender {
+    if (self.appDelegate.mpcHandler.session != nil) {
+        [[self.appDelegate mpcHandler] setupBrowser];
+        [[[self.appDelegate mpcHandler] browser] setDelegate:self];
+        
+        [self presentViewController:self.appDelegate.mpcHandler.browser
+                           animated:YES
+                         completion:nil];
+    }
+
+}
+
 
 @end

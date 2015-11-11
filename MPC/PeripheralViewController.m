@@ -131,7 +131,7 @@
     
     [picker setDelegate: self];
     picker.showsCloudItems = NO;
-    picker.allowsPickingMultipleItems = NO;
+    picker.allowsPickingMultipleItems = YES;
     picker.prompt =
     NSLocalizedString (@"Pick a song to send",
                        "Prompt in media item picker");
@@ -140,7 +140,7 @@
 }
 
 - (void) mediaPicker: (MPMediaPickerController *) mediaPicker
-   didPickMediaItems: (MPMediaItemCollection *) collection {
+   didPickMediaItems: (MPMediaItemCollection *) collection {    
     NSLog(@"%@", collection.items[0]);
     [self mediaItemToData:collection.items[0]];
     
