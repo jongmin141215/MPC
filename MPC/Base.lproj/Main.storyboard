@@ -66,12 +66,17 @@
                                     <action selector="searchForPeers:" destination="JW2-Gk-vBt" eventType="touchUpInside" id="LAw-oD-Z61"/>
                                 </connections>
                             </button>
+                            <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" fixedFrame="YES" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="Qmv-8E-7dR">
+                                <rect key="frame" x="85" y="297" width="150" height="2"/>
+                            </progressView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <navigationItem key="navigationItem" id="8Cp-uw-Wdf"/>
                     <connections>
                         <outlet property="playButton" destination="oSH-uj-Nb7" id="XGE-NJ-RNI"/>
+                        <outlet property="progressBar" destination="Qmv-8E-7dR" id="zgj-cZ-54F"/>
+                        <outlet property="progressView" destination="Qmv-8E-7dR" id="B1W-bW-N7T"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="rn0-UE-yXx" userLabel="First Responder" sceneMemberID="firstResponder"/>

@@ -12,6 +12,9 @@
 
 @interface CentralViewController ()
 @property (weak, nonatomic) IBOutlet UIButton *playButton;
+@property (weak, nonatomic) IBOutlet UIProgressView *progressView;
+@property (nonatomic) float progressValue;
+@property (weak, nonatomic) IBOutlet UIProgressView *progressBar;
 
 
 @end
@@ -19,7 +22,10 @@
 @implementation CentralViewController
 
 - (void)viewDidLoad {
+    
     [super viewDidLoad];
+    self.progressBar.hidden = YES;
+    self.progressBar.progress = 0.0;
     self.playButton.enabled = NO;
     self.bufferedSongData = [NSMutableData data];
     self.pendingRequests = [NSMutableArray array];
@@ -88,10 +94,19 @@
 }
 - (void)handleStreamDataWithNotification:(NSNotification *)notification {
     NSLog(@"handleStreamData");
+    self.progressBar.hidden = NO;
     NSDictionary *userInfoDict = [notification userInfo];
     
     NSData *data = [userInfoDict objectForKey:@"data"];
     [_bufferedSongData appendData:data];
+    self.progressValue = [[NSNumber numberWithInt: self.bufferedSongData.length] floatValue]/ [[NSNumber numberWithInt: self.songSize] floatValue];
+    NSLog(@"float number: %f", self.progressBar.progress);
+    if (_progressValue >= 1) {
+        self.progressBar.hidden = YES;
+    } else {
+        self.progressBar.progress = self.progressValue;
+    }
+
     [self processPendingRequests];
     
     NSLog(@"Recv. %lu bytes", (unsigned long)data.length);
@@ -128,6 +143,7 @@
             [loadingRequest finishLoading];
             
             NSLog(@"Finished processing loading request!");
+            
         }
     }
     
