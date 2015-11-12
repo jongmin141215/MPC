@@ -19,5 +19,7 @@
 @property (strong, nonatomic) NSMutableData *bufferedSongData;
 @property (strong, nonatomic) NSDictionary *testData;
 @property NSUInteger songSize;
+@property (strong, nonatomic) NSArray *songTitles;
+@property (strong,nonatomic) NSString *songToPlayTitle;
 
 @end

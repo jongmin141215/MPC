@@ -4,16 +4,14 @@
 //
 //  Created by Jongmin Kim on 11/11/15.
 //  Copyright © 2015 Jongmin Kim. All rights reserved.
-//  Joe worked on
+//  MVP!!
 
 #import "CentralViewController.h"
 @import MultipeerConnectivity;
 @import AVFoundation;
 
 @interface CentralViewController ()
-@property (weak, nonatomic) IBOutlet UIButton *playButton;
-@property (weak, nonatomic) IBOutlet UILabel *songTile;
-
+@property (weak, nonatomic) IBOutlet UITableView *playlist;
 
 @end
 
@@ -36,9 +34,11 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+//    _playlist.delegate = self;
     _testData = @{@"song":@"Cedarwood Road"};
+    _songToPlayTitle = [[NSString alloc]init];
     
-    self.playButton.enabled = NO;
+//    self.playButton.enabled = NO;
     self.bufferedSongData = [NSMutableData data];
     self.pendingRequests = [NSMutableArray array];
     
@@ -83,12 +83,24 @@
     NSData *sentData = [userInfoDict objectForKey:@"data"];
     // Convert the received data into a NSString object.
     NSDictionary *myDictionary = (NSDictionary*) [NSKeyedUnarchiver unarchiveObjectWithData:sentData];
+
     NSLog(@"Value 1 is %@",[myDictionary objectForKey:@"songList"][0]);
+    NSLog(@"Value 2 is %@",[myDictionary objectForKey:@"songList"][1]);
+    NSLog(@"Value 3 is %@",[myDictionary objectForKey:@"songList"][2]);
     
     if ([[myDictionary objectForKey:@"play"]  isEqual: @"No"]){
+        
+        self.songTitles = [myDictionary objectForKey:@"songList"];
+        
         NSLog(@"This is the list of songs not a file size to play a song!");
+        NSLog(@"Value 1 is %@",self.songTitles[0]);
+        NSLog(@"Value 2 is %@",self.songTitles[1]);
+        NSLog(@"Value 3 is %@",self.songTitles[2]);
+        [self.playlist reloadData];
         return;
+        
     }
+    
     
 //    if ([[myDictionary objectForKey:@"play"]  isEqual: @"Yes"]) {
 //        NSLog(@"initialize player and get ready to play the song!");
@@ -238,7 +250,7 @@
     {
         NSLog(@"READY TO PLAY");
         [self.player play];
-        self.playButton.enabled = YES;
+//        self.playButton.enabled = YES;
         
     }
 }
@@ -257,6 +269,60 @@
     }
 
 }
+
+#pragma mark - Table view data source
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return self.songTitles.count;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    static NSString *CellIdentifier = @"CentralCell";
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
+    
+    NSString *current = [self.songTitles objectAtIndex:indexPath.row];
+    
+    cell.textLabel.text = current;
+//    cell.detailTextLabel.text = [current valueForProperty:MPMediaItemPropertyAlbumArtist];
+    
+//    MPMediaItemArtwork *artwork = [current valueForProperty:MPMediaItemPropertyArtwork];
+    
+//    UIImage *artworkImage = [artwork imageWithSize: CGSizeMake (44, 44)];
+//    
+//    if (artworkImage) {
+//        cell.imageView.image = artworkImage;
+//    } else {
+//        cell.imageView.image = [UIImage imageNamed:@"No-artwork-albums.png"];
+//    }
+    
+    return cell;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    int rowNo = indexPath.row;
+    NSLog(@"We got this %d",rowNo);
+    
+    _songToPlayTitle = _songTitles[rowNo];
+    
+    NSError *error;
+    
+    
+    NSDictionary * playSongTitle = @{@"song": _songToPlayTitle};
+    NSData *myData = [NSKeyedArchiver archivedDataWithRootObject: playSongTitle];
+    
+    [self.appDelegate.mpcHandler.session sendData:myData
+                                          toPeers:@[self.appDelegate.mpcHandler.session.connectedPeers[0]]
+                                         withMode:MCSessionSendDataReliable
+                                            error:&error];
+
+    
+    
+}
+
+
 
 
 @end

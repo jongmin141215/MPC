@@ -210,14 +210,7 @@
     [self presentModalViewController: picker animated: YES];
 }
 
-//- (void) mediaPicker: (MPMediaPickerController *) mediaPicker
-//   didPickMediaItems: (MPMediaItemCollection *) collection {    
-//    NSLog(@"%@", collection.items[0]);
-//    [self mediaItemToData:collection.items[0]];//this is where we are converting it to the NSdata object to be transferred
-//    
-//    [self dismissModalViewControllerAnimated: YES];
-//}
-//
+
 - (void) mediaPickerDidCancel: (MPMediaPickerController *) mediaPicker {
     [self dismissModalViewControllerAnimated: YES];
 }
