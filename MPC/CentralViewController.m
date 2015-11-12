@@ -4,7 +4,7 @@
 //
 //  Created by Jongmin Kim on 11/11/15.
 //  Copyright © 2015 Jongmin Kim. All rights reserved.
-//
+//  Joe worked on
 
 #import "CentralViewController.h"
 @import MultipeerConnectivity;
@@ -12,14 +12,32 @@
 
 @interface CentralViewController ()
 @property (weak, nonatomic) IBOutlet UIButton *playButton;
+@property (weak, nonatomic) IBOutlet UILabel *songTile;
 
 
 @end
 
 @implementation CentralViewController
 
+- (IBAction)sendAndPlayTest:(id)sender {
+    
+    NSError *error;
+
+    NSData *myData = [NSKeyedArchiver archivedDataWithRootObject:_testData];
+    
+    [self.appDelegate.mpcHandler.session sendData:myData
+                                          toPeers:@[self.appDelegate.mpcHandler.session.connectedPeers[0]]
+                                         withMode:MCSessionSendDataReliable
+                                            error:&error];
+}
+
+
+
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    _testData = @{@"song":@"Cedarwood Road"};
+    
     self.playButton.enabled = NO;
     self.bufferedSongData = [NSMutableData data];
     self.pendingRequests = [NSMutableArray array];
@@ -62,8 +80,21 @@
     NSLog(@"handleReceivedData");
     // Get the user info dictionary that was received along with the notification.
     NSDictionary *userInfoDict = [notification userInfo];
-    
+    NSData *sentData = [userInfoDict objectForKey:@"data"];
     // Convert the received data into a NSString object.
+    NSDictionary *myDictionary = (NSDictionary*) [NSKeyedUnarchiver unarchiveObjectWithData:sentData];
+    NSLog(@"Value 1 is %@",[myDictionary objectForKey:@"songList"][0]);
+    
+    if ([[myDictionary objectForKey:@"play"]  isEqual: @"No"]){
+        NSLog(@"This is the list of songs not a file size to play a song!");
+        return;
+    }
+    
+//    if ([[myDictionary objectForKey:@"play"]  isEqual: @"Yes"]) {
+//        NSLog(@"initialize player and get ready to play the song!");
+//        return;
+//    }
+    
     
     NSData *fullSongData = [userInfoDict objectForKey:@"data"];
     [fullSongData getBytes:&_songSize length:sizeof(_songSize)];
@@ -78,6 +109,7 @@
         
         AVPlayerItem *playerItem = [AVPlayerItem playerItemWithAsset:asset];
         self.player = [[AVPlayer alloc] initWithPlayerItem:playerItem];
+        NSLog(@"Play audio!!!");
         [playerItem addObserver:self forKeyPath:@"status" options:NSKeyValueObservingOptionNew context:NULL];
     }
     
@@ -205,7 +237,9 @@
     if (self.player.currentItem.status == AVPlayerItemStatusReadyToPlay)
     {
         NSLog(@"READY TO PLAY");
+        [self.player play];
         self.playButton.enabled = YES;
+        
     }
 }
 

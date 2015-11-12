@@ -242,7 +242,7 @@
 				TargetAttributes = {
 					0D2944851BF2D15100AA6F86 = {
 						CreatedOnToolsVersion = 7.1;
-						DevelopmentTeam = 86KZ389579;
+						DevelopmentTeam = 858GSPC73G;
 					};
 					0D29449E1BF2D15100AA6F86 = {
 						CreatedOnToolsVersion = 7.1;
@@ -458,10 +458,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = MPC/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.audioqueue.jongmin.MPC;
+				PRODUCT_BUNDLE_IDENTIFIER = com.audioqasdueue.jongmin.MPC;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Debug;
 		};
@@ -469,10 +472,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = MPC/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.audioqueue.jongmin.MPC;
+				PRODUCT_BUNDLE_IDENTIFIER = com.audioqasdueue.jongmin.MPC;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Release;
 		};

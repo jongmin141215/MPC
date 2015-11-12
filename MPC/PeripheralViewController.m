@@ -12,19 +12,128 @@
 @import AVFoundation;
 
 @interface PeripheralViewController ()
+@property (weak, nonatomic) IBOutlet UITableView *tableView;
 
 @end
 
 @implementation PeripheralViewController
 
+
 - (IBAction)sendMusic:(id)sender {
+//    [self.appDelegate.mpcHandler advertiseSelf:NO];
+//    
+//    NSError *error;
+//    
+//    NSLog(@"PERR: %@", self.appDelegate.mpcHandler.session.connectedPeers[0]);
+//    
+//    int songLen = _fullSongData.length;
+//    [self.appDelegate.mpcHandler.session sendData:[NSData dataWithBytes:&songLen length:sizeof(songLen)]
+//                                          toPeers:@[self.appDelegate.mpcHandler.session.connectedPeers[0]]
+//                                         withMode:MCSessionSendDataReliable
+//                                            error:&error];
+//    
+//    NSStream *outputStream = [self.appDelegate.mpcHandler.session startStreamWithName:@"musicStream" toPeer:self.appDelegate.mpcHandler.session.connectedPeers[0] error:&error];
+//    
+//    outputStream.delegate = self;
+//    [outputStream scheduleInRunLoop:[NSRunLoop mainRunLoop]
+//                            forMode:NSDefaultRunLoopMode];
+//    [outputStream open];
+//    
+//    if (error != nil) {
+//        NSLog(@"%@", [error localizedDescription]);
+//    } else {
+//        NSLog(@"Success! Started music stream");
+//    }
+}
+
+- (void)stream:(NSOutputStream *)stream handleEvent:(NSStreamEvent)eventCode
+{
+    switch(eventCode) {
+        case NSStreamEventHasSpaceAvailable:
+        {
+            NSLog(@"Writing to stream");
+            uint8_t *readBytes = (uint8_t *)[_playingSongData bytes];
+            readBytes += _byteIndex; // instance variable to move pointer
+            int data_len = [_playingSongData length];
+            unsigned int len = ((data_len - _byteIndex >= 1024) ?
+                                1024 : (data_len-_byteIndex));
+            uint8_t buf[len];
+            (void)memcpy(buf, readBytes, len);
+            len = [stream write:(const uint8_t *)buf maxLength:len];
+            NSLog(@"Len was %i, byte index is %i", len, _byteIndex);
+            _byteIndex += len;
+            break;
+        }
+    }
+}
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    
+
+    _byteIndex = 0;
+    _songTitles = [[NSMutableArray alloc]init];
+    _fullSongDictionary = [[NSMutableDictionary alloc]init];
+    _fullSongData = [NSData data];
+    _playingSongData = [NSData data];
+    
+    
+//    _songTitles = @{@"song1":@"best ever",@"song2":@"worst ever"};
+    
+    //    NSURL *url = [[NSBundle mainBundle] URLForResource:@"test" withExtension:@"m4a"];
+    //    _fullSongData = [NSData dataWithContentsOfURL:url];
+
+    
+    self.appDelegate = (AppDelegate *) [[UIApplication sharedApplication] delegate];
+    
+    [self.appDelegate.mpcHandler setupPeerWithDisplayName:[UIDevice currentDevice].name];
+    [self.appDelegate.mpcHandler setupSession];
+    [self.appDelegate.mpcHandler advertiseSelf:YES];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(peerChangedStateWithNotification:)
+                                                 name:@"MPCDemo_DidChangeStateNotification"
+                                               object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(handleReceivedDataWithNotification:)
+                                                 name:@"MPCDemo_DidReceiveDataNotification"
+                                               object:nil];
+    // Do any additional setup after loading the view, typically from a nib.
+}
+
+- (void)handleReceivedDataWithNotification:(NSNotification *)notification {
+    NSLog(@"Peripheral handleReceivedData");
+    // Get the user info dictionary that was received along with the notification.
+    NSDictionary *userInfoDict = [notification userInfo];
+    
+    NSData *nsData = [userInfoDict objectForKey:@"data"];
+    
+    NSDictionary *myDictionary = (NSDictionary*) [NSKeyedUnarchiver unarchiveObjectWithData:nsData];
+    NSString * titleOfSong = [myDictionary objectForKey:@"song"];
+//    NSLog(@"some message this is .... %@",message);
+
+    
+    //songs need to be exported and ready!
+    
+    
     [self.appDelegate.mpcHandler advertiseSelf:NO];
     
     NSError *error;
     
     NSLog(@"PERR: %@", self.appDelegate.mpcHandler.session.connectedPeers[0]);
     
-    int songLen = _fullSongData.length;
+    
+    
+    
+    if ([_songTitles containsObject:titleOfSong]) {
+        NSLog(@"Title found");
+
+        //Prepare!!!!
+        
+//    int songLen = _fullSongData.length;
+        _playingSongData =  [_fullSongDictionary objectForKey:titleOfSong];
+        int songLen = _playingSongData.length;
+        
     [self.appDelegate.mpcHandler.session sendData:[NSData dataWithBytes:&songLen length:sizeof(songLen)]
                                           toPeers:@[self.appDelegate.mpcHandler.session.connectedPeers[0]]
                                          withMode:MCSessionSendDataReliable
@@ -42,49 +151,11 @@
     } else {
         NSLog(@"Success! Started music stream");
     }
-}
 
-- (void)stream:(NSOutputStream *)stream handleEvent:(NSStreamEvent)eventCode
-{
-    switch(eventCode) {
-        case NSStreamEventHasSpaceAvailable:
-        {
-            NSLog(@"Writing to stream");
-            uint8_t *readBytes = (uint8_t *)[_fullSongData bytes];
-            readBytes += _byteIndex; // instance variable to move pointer
-            int data_len = [_fullSongData length];
-            unsigned int len = ((data_len - _byteIndex >= 1024) ?
-                                1024 : (data_len-_byteIndex));
-            uint8_t buf[len];
-            (void)memcpy(buf, readBytes, len);
-            len = [stream write:(const uint8_t *)buf maxLength:len];
-            NSLog(@"Len was %i, byte index is %i", len, _byteIndex);
-            _byteIndex += len;
-            break;
-        }
+
     }
-}
-
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    _byteIndex = 0;
     
-    //    NSURL *url = [[NSBundle mainBundle] URLForResource:@"test" withExtension:@"m4a"];
-    //    _fullSongData = [NSData dataWithContentsOfURL:url];
-    _fullSongData = [NSData data];
     
-    self.appDelegate = (AppDelegate *) [[UIApplication sharedApplication] delegate];
-    
-    [self.appDelegate.mpcHandler setupPeerWithDisplayName:[UIDevice currentDevice].name];
-    [self.appDelegate.mpcHandler setupSession];
-    [self.appDelegate.mpcHandler advertiseSelf:YES];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(peerChangedStateWithNotification:)
-                                                 name:@"MPCDemo_DidChangeStateNotification"
-                                               object:nil];
-    
-    // Do any additional setup after loading the view, typically from a nib.
 }
 
 - (void)peerChangedStateWithNotification:(NSNotification *)notification {
@@ -139,19 +210,95 @@
     [self presentModalViewController: picker animated: YES];
 }
 
-- (void) mediaPicker: (MPMediaPickerController *) mediaPicker
-   didPickMediaItems: (MPMediaItemCollection *) collection {    
-    NSLog(@"%@", collection.items[0]);
-    [self mediaItemToData:collection.items[0]];
-    
-    [self dismissModalViewControllerAnimated: YES];
-}
+//- (void) mediaPicker: (MPMediaPickerController *) mediaPicker
+//   didPickMediaItems: (MPMediaItemCollection *) collection {    
+//    NSLog(@"%@", collection.items[0]);
+//    [self mediaItemToData:collection.items[0]];//this is where we are converting it to the NSdata object to be transferred
+//    
+//    [self dismissModalViewControllerAnimated: YES];
+//}
+//
 - (void) mediaPickerDidCancel: (MPMediaPickerController *) mediaPicker {
     [self dismissModalViewControllerAnimated: YES];
 }
 
 
--(void)mediaItemToData : (MPMediaItem *) curItem
+
+- (void) mediaPicker: (MPMediaPickerController *) mediaPicker
+   didPickMediaItems: (MPMediaItemCollection *) collection {
+//    _songs = nil;
+//    _songTitles = nil;
+    NSLog(@"item picked %@", collection );
+    
+    
+    [self dismissViewControllerAnimated: YES completion:nil];
+    self.songs = [collection items];
+    NSLog(@"got the songs");
+    //    [self mediaItemToData:collection.items[0]]; //////////////////
+    for (MPMediaItem *song in self.songs) {
+         [self.songTitles addObject:[song valueForProperty: MPMediaItemPropertyTitle]];
+        [self mediaItemToData:song withTitle:[song valueForProperty: MPMediaItemPropertyTitle]];
+        NSLog(@"Number of items exported %lu", (unsigned long)_fullSongDictionary.count);
+        NSLog(@"Title %@",[song valueForProperty: MPMediaItemPropertyTitle] );
+    }
+    [self.tableView reloadData];
+    
+    
+    
+    
+    
+    NSError *error;
+    
+    NSLog(@"start");
+    NSDictionary * myHash = @{@"songList":_songTitles,@"play": @"No"};
+    NSLog(@"end");
+    NSData *myData = [NSKeyedArchiver archivedDataWithRootObject: myHash];
+    NSLog(@"success");
+//    return;
+    
+    [self.appDelegate.mpcHandler.session sendData:myData
+                                          toPeers:@[self.appDelegate.mpcHandler.session.connectedPeers[0]]
+                                         withMode:MCSessionSendDataReliable
+                                            error:&error];
+    
+}
+
+
+
+#pragma mark - Table view data source
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return self.songs.count;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    static NSString *CellIdentifier = @"Cell";
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
+    
+    MPMediaItem *current = [self.songs objectAtIndex:indexPath.row];
+    
+    cell.textLabel.text = [current valueForProperty: MPMediaItemPropertyTitle];
+    cell.detailTextLabel.text = [current valueForProperty:MPMediaItemPropertyAlbumArtist];
+    
+    MPMediaItemArtwork *artwork = [current valueForProperty:MPMediaItemPropertyArtwork];
+    
+    UIImage *artworkImage = [artwork imageWithSize: CGSizeMake (44, 44)];
+    
+    if (artworkImage) {
+        cell.imageView.image = artworkImage;
+    } else {
+        cell.imageView.image = [UIImage imageNamed:@"No-artwork-albums.png"];
+    }
+    
+    return cell;
+}
+
+
+
+
+
+-(void)mediaItemToData : (MPMediaItem *) curItem withTitle: (NSString *) title
 {
     NSURL *url = [curItem valueForProperty: MPMediaItemPropertyAssetURL];
     
@@ -172,7 +319,9 @@
     
     NSString * fileName = [NSString stringWithFormat:@"%@.m4a",intervalSeconds];
     
-    NSString *exportFile = [myDocumentsDirectory stringByAppendingPathComponent:fileName];
+    NSString * NewfileName = [title stringByAppendingString:fileName];
+    
+    NSString *exportFile = [myDocumentsDirectory stringByAppendingPathComponent:NewfileName];
     
     NSURL *exportURL = [NSURL fileURLWithPath:exportFile];
     exporter.outputURL = exportURL;
@@ -197,10 +346,11 @@
                  NSLog (@"AVAssetExportSessionStatusCompleted");
                  
                  NSData *data = [NSData dataWithContentsOfFile: [myDocumentsDirectory
-                                                                 stringByAppendingPathComponent:fileName]];
+                                                                 stringByAppendingPathComponent:NewfileName]];
                  
                  NSLog(@"%i", data.length);
-                 _fullSongData = data;
+                 [_fullSongDictionary setObject:data forKey:title];
+                  //                 _fullSongData = data;
                  //DLog(@"Data %@",data);
                  data = nil;
                  

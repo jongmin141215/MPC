@@ -28,7 +28,7 @@
                                 <rect key="frame" x="108" y="305" width="73" height="30"/>
                                 <state key="normal" title="Peripheral"/>
                                 <connections>
-                                    <segue destination="r8l-dr-Wsz" kind="push" id="AYN-gr-TSs"/>
+                                    <segue destination="sPQ-5a-rHM" kind="push" id="eko-JU-EHd"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -39,6 +39,68 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="558.39999999999998" y="345.5333333333333"/>
+        </scene>
+        <!--Peripheral View Controller-->
+        <scene sceneID="hzS-AX-qSh">
+            <objects>
+                <viewController id="sPQ-5a-rHM" customClass="PeripheralViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="Acl-QA-sgu"/>
+                        <viewControllerLayoutGuide type="bottom" id="ey9-5S-jPN"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="IIW-dE-saH">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="GZH-Bj-UIk">
+                                <rect key="frame" x="31" y="103" width="259" height="312"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="Cell" id="3ti-Ec-uqb">
+                                        <rect key="frame" x="0.0" y="92" width="259" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="3ti-Ec-uqb" id="rlu-Gp-5RB">
+                                            <rect key="frame" x="0.0" y="0.0" width="259" height="43.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </prototypes>
+                                <connections>
+                                    <outlet property="dataSource" destination="sPQ-5a-rHM" id="8Tk-Ri-pnC"/>
+                                </connections>
+                            </tableView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="UA6-en-0w1">
+                        <barButtonItem key="leftBarButtonItem" style="plain" id="jVk-GP-c7a">
+                            <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="TWa-VM-to4">
+                                <rect key="frame" x="16" y="7" width="71" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Pick Song"/>
+                                <connections>
+                                    <action selector="pickSong:" destination="sPQ-5a-rHM" eventType="touchUpInside" id="lnB-ZM-Kwc"/>
+                                </connections>
+                            </button>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" style="plain" id="c0b-bO-CGA">
+                            <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="qow-4L-yuB">
+                                <rect key="frame" x="224" y="7" width="80" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Send Music"/>
+                                <connections>
+                                    <action selector="sendMusic:" destination="sPQ-5a-rHM" eventType="touchUpInside" id="bzA-9Y-Jao"/>
+                                </connections>
+                            </button>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="tableView" destination="GZH-Bj-UIk" id="Jf3-cx-s5o"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="oPu-dV-7tW" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1004" y="556"/>
         </scene>
         <!--Central View Controller-->
         <scene sceneID="n6N-Jo-Dg8">
@@ -66,52 +128,31 @@
                                     <action selector="searchForPeers:" destination="JW2-Gk-vBt" eventType="touchUpInside" id="LAw-oD-Z61"/>
                                 </connections>
                             </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="B5U-Cx-cBt">
+                                <rect key="frame" x="64" y="232" width="202" height="110"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="O3F-IS-Uir">
+                                <rect key="frame" x="117" y="157" width="170" height="30"/>
+                                <state key="normal" title="Send &amp; Playme this song"/>
+                                <connections>
+                                    <action selector="sendAndPlayTest:" destination="JW2-Gk-vBt" eventType="touchUpInside" id="M6L-wC-hA5"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <navigationItem key="navigationItem" id="8Cp-uw-Wdf"/>
                     <connections>
                         <outlet property="playButton" destination="oSH-uj-Nb7" id="XGE-NJ-RNI"/>
+                        <outlet property="songTile" destination="B5U-Cx-cBt" id="mER-mf-UkI"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="rn0-UE-yXx" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="914.66666666666663" y="-114.54666666666667"/>
-        </scene>
-        <!--Peripheral View Controller-->
-        <scene sceneID="9RH-3r-bWs">
-            <objects>
-                <viewController id="r8l-dr-Wsz" customClass="PeripheralViewController" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="1vx-LW-ntC"/>
-                        <viewControllerLayoutGuide type="bottom" id="aYn-RL-364"/>
-                    </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="nkn-19-gXl">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fzm-ck-wBL">
-                                <rect key="frame" x="30" y="90" width="69" height="30"/>
-                                <state key="normal" title="Pick Song"/>
-                                <connections>
-                                    <action selector="pickSong:" destination="r8l-dr-Wsz" eventType="touchUpInside" id="JZU-Ov-gbW"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YN5-zF-YHi">
-                                <rect key="frame" x="160" y="90" width="80" height="30"/>
-                                <state key="normal" title="Send Music"/>
-                                <connections>
-                                    <action selector="sendMusic:" destination="r8l-dr-Wsz" eventType="touchUpInside" id="CEz-k6-MhY"/>
-                                </connections>
-                            </button>
-                        </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                    </view>
-                    <navigationItem key="navigationItem" id="Bof-Z9-F21"/>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="U2q-87-Pyd" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="922.13333333333333" y="573.67999999999995"/>
+            <point key="canvasLocation" x="979" y="-133"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="JIB-Co-JpX">
